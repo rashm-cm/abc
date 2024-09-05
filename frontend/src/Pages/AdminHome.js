@@ -4,7 +4,7 @@ import AvailableServices from '../Components/AvailableServices';
 import { useState,useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import { Link } from 'react-router-dom';
 const AdminHome = () => {
   const [auth, setAuth] = useState(false);
   
@@ -12,15 +12,19 @@ const [customers, setCustomers] = useState([]);
 const [selectedCustomer, setSelectedCustomer] = useState(null);
 const navigate= useNavigate();
 useEffect(() => {
-  // Fetch customer list
   axios.get('http://localhost:8081/customers')
     .then(res => {
-      if (res.data) {
+      console.log(res.data); 
+      if (Array.isArray(res.data)) {
         setCustomers(res.data);
+      } else {
+        console.error("Expected an array, but got:", res.data);
+        setCustomers([]); // Avoid setting it to a non-array
       }
     })
     .catch(err => console.error("Error fetching customers:", err));
 }, []);
+
   const handleLogout = () => {
     axios.get('http://localhost:8081/logout')
       .then(res => {
@@ -58,22 +62,33 @@ useEffect(() => {
   };
   return (
     <div>
-    <button onClick={handleLogout}>Logout</button>
+      <button onClick={handleLogout}>Logout</button>
+      <div>
+        <Link to="/archive">
+          <button className="archive-button">View Archived Services</button>
+        </Link>
+      </div>
       <AvailableServices />
       <h2>Create a New Service</h2>
       <CreateService />
       {/* <UpdateService /> */}
+      
       <h2>Customer List</h2>
       <ul>
-        {customers.map(customer => (
-          <li key={customer.id}>
-            <span>{customer.name} ({customer.email})</span>
-            <button onClick={() => viewCustomerDetails(customer.id)}>View Details</button>
-            <button onClick={() => removeCustomer(customer.id)}>Remove</button>
-          </li>
-        ))}
+        {Array.isArray(customers) ? (
+          customers.map(customer => (
+            <li key={customer.id}>
+              <span>{customer.name} ({customer.email})</span>
+              <button onClick={() => viewCustomerDetails(customer.id)}>View Details</button>
+              <button onClick={() => removeCustomer(customer.id)}>Remove</button>
+            </li>
+          ))
+        ) : (
+          <li>No customers available</li>
+        )}
       </ul>
-
+      
+  
       {selectedCustomer && (
         <div>
           <h3>Customer Details</h3>
@@ -81,7 +96,6 @@ useEffect(() => {
           <p>Email: {selectedCustomer.email}</p>
           <h4>Enrolled Services</h4>
           <ul>
-            
             {selectedCustomer.services_enrolled.map((service, index) => (
               <li key={index}>
                 {service.service_name} - {service.plan} (Features: {service.features})
@@ -92,6 +106,7 @@ useEffect(() => {
       )}
     </div>
   );
+  
 };
 
 export default AdminHome;

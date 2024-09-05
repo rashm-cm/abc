@@ -114,7 +114,7 @@ app.post("/login", async (req, res) => {
         );
         res.cookie("token", token);
         console.log(user.id)
-        return res.json({ Status: "Success", role: user.role,id:user.id });
+        return res  .json({ Status: "Success", role: user.role,id:user.id });
       } else {
         return res.json({ Error: "Incorrect Password" });
       }
@@ -293,7 +293,7 @@ app.delete("/deleteservice/:id", verifyUser, verifyAdmin, async (req, res) => {
       return res.status(404).json({ Error: "Service not found" });
     }
 
-    // Delete the service and its plans
+    
     await Plan.destroy({ where: { service_id: id } });
     await service.destroy();
 
@@ -410,7 +410,6 @@ app.post('/customer-service/enroll', verifyUser, async (req, res) => {
     try {
         const { customer_id } = req.params;
 
-        // Fetch the customer details from the User table
         const customer = await User.findOne({
             where: { id: customer_id, role: 'customer' },
             attributes: ['id', 'name', 'email'] // Include fields as needed
@@ -420,7 +419,6 @@ app.post('/customer-service/enroll', verifyUser, async (req, res) => {
             return res.status(404).json({ Error: 'Customer not found' });
         }
 
-        // Fetch the services the customer is enrolled in from CustomerService table
         const services = await CustomerService.findAll({
             where: { customer_id: customer_id },
             include: [{
@@ -430,7 +428,6 @@ app.post('/customer-service/enroll', verifyUser, async (req, res) => {
             attributes: ['plan_name', 'features','service_id'] // Include plan and features from CustomerService table
         });
 
-        // Format the response data
         const responseData = {
             id: customer.id,
             name: customer.name,
@@ -451,7 +448,6 @@ app.post('/customer-service/enroll', verifyUser, async (req, res) => {
 });
 
 
-// Get current plan for a specific customer and service
 app.get('/customer-service/:customer_id/service/:service_id', async (req, res) => {
   const { customer_id, service_id } = req.params;
   try {
@@ -470,7 +466,6 @@ app.get('/customer-service/:customer_id/service/:service_id', async (req, res) =
 });
 
 
-// Update the plan for a specific customer and service
 app.put('/customer-service/update', async (req, res) => {
   const { customer_id, service_id, new_plan, features } = req.body;
   try {
@@ -529,7 +524,8 @@ const name=await User.findOne({ where: { id:customer_id } });
     }  if (!name) {
       return res.status(404).json({ Error: 'Id not found for this customer' });
     }
-
+//2181
+//8083
     // Archive the service
     await Archive.create({
       customer_id: customer_id,
@@ -562,6 +558,15 @@ app.delete('/customer-services/:service_id', verifyUser, async (req, res) => {
   } catch (err) {
     console.error('Error deleting service:', err);
     return res.status(500).json({ Error: 'Error deleting service' });
+  }
+});
+
+app.get('/archives', async (req, res) => {
+  try {
+      const archives = await Archive.findAll();
+      res.json(archives);
+  } catch (err) {
+      res.status(500).json({ error: 'Failed to fetch archive data' });
   }
 });
 
