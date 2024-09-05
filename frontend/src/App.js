@@ -1,4 +1,5 @@
 import './App.css';
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom'; // Corrected import statement
 import Home from './Pages/Home'; // Ensure you have imported Home component
 import Register from './Authentication/Register';
@@ -8,7 +9,9 @@ import AdminHome from './Pages/AdminHome';
 import Configure from './Pages/Configure';
 import Enroll from './Pages/Enroll';
 import Terminate from './Pages/Terminate'
+
 function App() {
+  
   return (
     <BrowserRouter>
       <Routes>
