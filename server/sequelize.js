@@ -1,9 +1,9 @@
-// sequelize.js
 import { Sequelize } from 'sequelize';
-
-const sequelize = new Sequelize('sps', 'root', 'Rashmitha@09', {
-    host: 'localhost',
-    dialect: 'mysql'
+import config from './config.js'; // Import the configuration
+ 
+const sequelize = new Sequelize(config.database, config.username, config.password, {
+  host: config.host,
+  dialect: config.dialect
 });
-
+ 
 export default sequelize;

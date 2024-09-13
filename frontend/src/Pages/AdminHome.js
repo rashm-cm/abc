@@ -65,7 +65,7 @@ useEffect(() => {
       <button onClick={handleLogout}>Logout</button>
       <div>
         <Link to="/archive">
-          <button className="archive-button">View Archived Services</button>
+          <button className="archive-button">View Archived  Customer details</button>
         </Link>
       </div>
       <AvailableServices />

@@ -6,7 +6,6 @@ import cookieParser from "cookie-parser";
 import User from "./models/User.js";
 import { sequelize, Service, Plan,CustomerService,Archive } from "./models/index.js";
 const saltRounds = 10;
-
 const app = express();
 app.use(express.json());
 app.use(
@@ -326,6 +325,7 @@ app.get('/services', async (req, res) => {
     }
   });
 
+  
 
 // In your existing Express server
 app.post('/customer-service/enroll', verifyUser, async (req, res) => {
@@ -340,7 +340,7 @@ app.post('/customer-service/enroll', verifyUser, async (req, res) => {
           plan_name: plan, // Use plan_name instead of plan
         },
       });
-  console.log(selectedPlan);
+      console.log('Selected Plan:', selectedPlan);
       if (!service || !selectedPlan) {
         return res.status(404).json({ Error: 'Service or Plan not found' });
       }
@@ -382,7 +382,7 @@ app.post('/customer-service/enroll', verifyUser, async (req, res) => {
       res.json({ Status: "Customer removed successfully" });
     } catch (err) {
       console.error("Error removing customer:", err);
-      res.status(500).json({ Error: "Server error" });
+      return res.status(500).json({ Error: "Server error" });
     }
   });
   
